@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "teleport-repro",
+    "slug": "teleport-repro",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "jsEngine": "hermes",
+    "android": {
+      "package": "com.example.teleportrepro"
+    },
+    "ios": {
+      "bundleIdentifier": "com.example.teleportrepro"
+    }
+  }
+}
