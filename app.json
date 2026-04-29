@@ -12,6 +12,11 @@
     },
     "ios": {
       "bundleIdentifier": "com.example.teleportrepro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6004f497-e8f5-428f-aedd-db170b0311fe"
+      }
     }
   }
 }
