@@ -35,6 +35,26 @@ The bugs do **NOT manifest** unless ALL of these hold:
   observable (`IllegalStateException` plus reflection-NoSuchFieldException) is
   Android 16+, since older versions still expose `View.mParent` to reflection.
 
+## Prebuilt APK
+
+A preview APK is bundled at the repo root (`teleport-repro-preview.apk`) and
+attached to the [v0.1.0-preview release](https://github.com/Nantris/teleport-1.1.4-repro/releases/tag/v0.1.0-preview).
+You can install it directly without building:
+
+```sh
+adb install teleport-repro-preview.apk
+```
+
+### Test scope
+
+I have only directly verified **Bug 1** with this APK on a real device — that
+is the only bug reachable on stock 1.1.4 (it gates the second-mount cycle).
+**Bugs 2 and 3 are theoretical until verified**: they should reproduce in
+this app once Bug 1 is patched and a fresh build is produced (Bug 2 fires on
+the second host mount; Bug 3 fires once a naive rebind is added). I did not
+do those follow-up builds — but the production stack traces in PRs #118 and
+#120 came from the exact same Portal/PortalHost layout this app reproduces.
+
 ## How to build
 
 ```sh

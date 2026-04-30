@@ -7,3 +7,5 @@ web-build/
 *.log
 .DS_Store
 *.apk
+# Track the published preview APK so the repo bundles a build-free repro.
+!teleport-repro-preview.apk
