@@ -10,7 +10,8 @@ import { HOST_NAME } from "../../App";
  * The Portal at app root has had its children physically attached to PortalView
  * since app boot (no host was registered with the matching name yet). Tapping
  * "Mount host" mounts a <PortalHost /> here, which causes registerHost to fire
- * onHostAvailable on the existing portal. That path on Android 16 NPEs:
+ * onHostAvailable on the existing portal. That path NPEs on Android with
+ * Fabric enabled:
  *
  *   java.lang.NullPointerException: Attempt to invoke virtual method
  *     'void android.view.View.unFocus(android.view.View)'
@@ -18,10 +19,10 @@ import { HOST_NAME } from "../../App";
  *     at android.view.ViewGroup.removeViewAt(...)
  *     at PortalView.extractPhysicalChildren(...)
  *
- * Toggling the host off and back on (without leaving the screen) reproduces
- * Bug 2's silent-empty failure once Bug 1 is patched: the second host mount
- * does not receive an onHostAvailable notification because PortalRegistry
- * dropped the pending list after the first one fired.
+ * Toggling the host off and back on (after Bug 1 is patched) reproduces
+ * Bug 2's silent-empty failure: the second host mount does not receive an
+ * onHostAvailable notification because PortalRegistry dropped the pending
+ * list after the first one fired.
  */
 export function SceneA() {
   const [hostMounted, setHostMounted] = useState(false);
@@ -30,11 +31,13 @@ export function SceneA() {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>
-        Step 1: tap "Mount host" — on stock 1.1.4, this NPEs on Android 16.
+        Stock 1.1.4: tap "Mount host" — the app crashes (Bug 1 NPE). That is
+        the only bug reachable on stock; Bugs 2 and 3 are gated behind it.
       </Text>
       <Text style={styles.label}>
-        Step 2 (after Bug 1 patched): tap "Unmount host", then "Mount host"
-        again. Expected on stock: silent empty (no crash, no content).
+        After PR #118 is applied: tap "Mount host", "Unmount host", "Mount
+        host" again. Expected: second mount renders empty (Bug 2) until
+        PR #119 is also applied.
       </Text>
 
       <Button

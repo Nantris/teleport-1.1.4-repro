@@ -9,12 +9,19 @@ export function HomeScreen({ navigation }: Props) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>react-native-teleport@1.1.4</Text>
-      <Text style={styles.subtitle}>Android 16 Fabric reparent reproduction</Text>
+      <Text style={styles.subtitle}>Android Fabric reparent reproduction</Text>
 
       <Text style={styles.note}>
-        IMPORTANT: build in release mode (`npm run android:release`). Bugs do
-        not manifest in dev. Repro device: Galaxy S24 / Android 16. New
-        Architecture must be enabled (it is, in app.json).
+        IMPORTANT: build in release mode. Bugs do NOT manifest in dev. New
+        Architecture (Fabric) must be enabled (it is, in app.json). Verified
+        on Android 16, but Bugs 1 and 2 are logic bugs and should affect
+        Android in general; Bug 3's specific failure mode is Android 16+.
+      </Text>
+
+      <Text style={styles.note}>
+        On stock react-native-teleport@1.1.4, ONLY Bug 1 is reachable from
+        either scene — it gates the second-mount cycle. Bugs 2 and 3 require
+        the corresponding upstream fixes to be applied first.
       </Text>
 
       <View style={styles.bugCard}>
@@ -22,19 +29,25 @@ export function HomeScreen({ navigation }: Props) {
         <Text style={styles.bugBody}>
           A single screen with a button that mounts {"<PortalHost />"} via state.
           The Portal at app root has its children physically attached. Tapping
-          the button registers a new host, which fires onHostAvailable on the
-          portal — that path NPEs on Android 16.
+          "Mount host" registers a new host, which fires onHostAvailable on the
+          portal — that path NPEs and crashes the app on stock 1.1.4.
         </Text>
         <Button title="Open Scene A" onPress={() => navigation.navigate("SceneA")} />
       </View>
 
       <View style={styles.bugCard}>
-        <Text style={styles.bugTitle}>Scene B — Remount cycle (Bugs 2 + 3)</Text>
+        <Text style={styles.bugTitle}>Scene B — NativeStack remount (Bugs 2 + 3)</Text>
         <Text style={styles.bugBody}>
-          A NativeStack screen that contains {"<PortalHost />"} inline. Push the
-          screen (host mounts, content moves in), pop it (host unmounts), push
-          it again (silent failure: content is empty). With Bug 2 patched,
-          attempting a naive rebind via host.addView throws IllegalStateException.
+          A NativeStack screen that contains {"<PortalHost />"} inline.
+          {"\n\n"}
+          On stock 1.1.4: pushing this screen crashes immediately with the
+          same Bug 1 NPE (the host registers as the screen mounts).
+          {"\n\n"}
+          After PR #118 is applied: first push works; pop, push again
+          → second mount renders empty (Bug 2).
+          {"\n\n"}
+          After PR #118 + a naive rebind branch: second push throws
+          IllegalStateException (Bug 3).
         </Text>
         <Button title="Open Scene B" onPress={() => navigation.navigate("SceneB")} />
       </View>
